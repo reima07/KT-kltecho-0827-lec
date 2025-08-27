@@ -105,7 +105,7 @@ def save_to_db():
         db = get_db_connection()
         data = request.json
         cursor = db.cursor()
-        sql = "INSERT INTO messages (message, user_id, created_at) VALUES (%s, %s, %s)"
+        sql = "INSERT INTO messages (message, user_id, timestamp) VALUES (%s, %s, %s)"
         cursor.execute(sql, (data['message'], user_id, datetime.now()))
         db.commit()
         cursor.close()
@@ -128,7 +128,7 @@ def get_from_db():
         user_id = session['user_id']
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM messages ORDER BY created_at DESC")
+        cursor.execute("SELECT * FROM messages ORDER BY timestamp DESC")
         messages = cursor.fetchall()
         cursor.close()
         db.close()

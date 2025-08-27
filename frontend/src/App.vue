@@ -40,7 +40,7 @@
           <div v-if="dbData.length && !loading">
             <h3>저장된 메시지:</h3>
             <ul>
-              <li v-for="item in dbData" :key="item.id">{{ item.message }} ({{ formatDate(item.created_at) }})</li>
+              <li v-for="item in dbData" :key="item.id">{{ item.message }} ({{ formatDate(item.timestamp) }})</li>
             </ul>
           </div>
         </div>
@@ -80,7 +80,7 @@
                 <tr v-for="result in searchResults" :key="result.id">
                   <td>{{ result.id }}</td>
                   <td>{{ result.message }}</td>
-                  <td>{{ formatDate(result.created_at) }}</td>
+                  <td>{{ formatDate(result.timestamp) }}</td>
                   <td>{{ result.user_id || '없음' }}</td>
                 </tr>
               </tbody>
