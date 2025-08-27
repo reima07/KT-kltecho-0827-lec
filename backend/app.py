@@ -105,8 +105,8 @@ def save_to_db():
         db = get_db_connection()
         data = request.json
         cursor = db.cursor()
-        sql = "INSERT INTO messages (message, created_at) VALUES (%s, %s)"
-        cursor.execute(sql, (data['message'], datetime.now()))
+        sql = "INSERT INTO messages (message, user_id, created_at) VALUES (%s, %s, %s)"
+        cursor.execute(sql, (data['message'], user_id, datetime.now()))
         db.commit()
         cursor.close()
         db.close()
