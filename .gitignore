@@ -1,0 +1,44 @@
+# ACR 설정 명령어 정리 (민감한 정보 포함)
+ACR_SETUP_COMMANDS.md
+
+# 환경 변수 파일
+.env
+.env.local
+.env.production
+
+# 로그 파일
+*.log
+
+# 임시 파일
+*.tmp
+*.temp
+
+# IDE 설정
+.vscode/
+.idea/
+
+# OS 생성 파일
+.DS_Store
+Thumbs.db
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Docker
+.dockerignore
+
+# Kubernetes
+*.kubeconfig

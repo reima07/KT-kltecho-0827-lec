@@ -15,6 +15,10 @@ spec:
       labels:
         app: backend
     spec:
+      # Azure Container Registry에서 이미지를 가져오기 위한 인증 시크릿
+      # ACR에서 private 이미지를 pull하기 위해 필요
+      imagePullSecrets:
+      - name: acr-registry
       containers:
       - name: backend
         # Azure Container Registry에서 이미지 가져오기
