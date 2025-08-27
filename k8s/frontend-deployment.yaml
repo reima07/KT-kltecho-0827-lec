@@ -1,8 +1,10 @@
+# 프론트엔드 애플리케이션 배포 설정
+# Vue.js 기반 프론트엔드 서비스를 쿠버네티스에 배포하는 설정
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: default
+  namespace: jiwoo  # jiwoo 네임스페이스에 배포 (기존 default에서 변경)
 spec:
   replicas: 1
   selector:
@@ -15,16 +17,21 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: giglepeople/aks-test-app-frontend:latest
+        # Azure Container Registry에서 이미지 가져오기
+        # kltecho_jiwoo-frontend라는 이름으로 빌드된 이미지 사용
+        image: ktech4.azurecr.io/kltecho_jiwoo-frontend:latest
         # imagePullPolicy: Never
         ports:
         - containerPort: 80
 ---
+---
+# 프론트엔드 서비스 설정
+# 외부에서 프론트엔드에 접근할 수 있도록 NodePort 서비스로 노출
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend-service
-  namespace: default
+  namespace: jiwoo  # jiwoo 네임스페이스에 서비스 생성 (기존 default에서 변경)
 spec:
   type: NodePort
   selector:

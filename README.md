@@ -2,6 +2,57 @@
 
 이 프로젝트는 Kubernetes 환경에서 Redis, MariaDB, Kafka를 활용하는 마이크로서비스 데모입니다.
 
+## CI/CD 설정
+
+### GitHub Actions 설정
+
+이 프로젝트는 GitHub Actions를 통해 자동으로 Docker 이미지를 빌드하고 Azure Container Registry(ACR)에 푸시합니다.
+
+#### 필요한 GitHub Secrets 설정
+
+GitHub 저장소의 Settings > Secrets and variables > Actions에서 다음 시크릿을 설정해야 합니다:
+
+- `ACR_USERNAME`: Azure Container Registry 사용자명
+- `ACR_PASSWORD`: Azure Container Registry 비밀번호
+
+> ⚠️ **보안 주의**: 실제 비밀번호는 GitHub Secrets에만 저장하고, 코드에는 절대 포함하지 마세요.
+
+#### 워크플로우 트리거
+
+- 브랜치: `main`, `master`, `develop`에 푸시될 때 자동 실행
+- 이미지 태그: 날짜 형식 (YYYYMMDD) + latest
+
+#### 생성되는 이미지
+
+- Backend: `ktech4.azurecr.io/kltecho_jiwoo-backend:{date}`
+- Frontend: `ktech4.azurecr.io/kltecho_jiwoo-frontend:{date}`
+
+### 배포 환경
+
+#### 네임스페이스
+- `jiwoo`: 애플리케이션 배포 네임스페이스
+
+#### 데이터베이스 연결
+- **MariaDB**: `jw-mariadb.jiwoo.svc.cluster.local` (jiwoo 네임스페이스, Helm으로 설치)
+- **Redis**: `redis-master.default.svc.cluster.local` (default 네임스페이스, 포트 6379)
+- **Redis Password**: `GjA0PHx96N`
+
+#### 배포 명령어
+
+```bash
+# 네임스페이스 생성
+kubectl create namespace jiwoo
+
+# 시크릿 배포
+kubectl apply -f k8s/backend-secret.yaml
+
+# 백엔드 배포
+kubectl apply -f k8s/backend-deployment.yaml
+
+# 프론트엔드 배포
+kubectl apply -f k8s/frontend-deployment.yaml
+```
+
 ## 주요 기능
 
 ### 1. 사용자 관리

@@ -1,8 +1,10 @@
+# 백엔드 애플리케이션 배포 설정
+# Flask 기반 백엔드 서비스를 쿠버네티스에 배포하는 설정
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: default
+  namespace: jiwoo  # jiwoo 네임스페이스에 배포 (기존 default에서 변경)
 spec:
   replicas: 1
   selector:
@@ -15,22 +17,28 @@ spec:
     spec:
       containers:
       - name: backend
-        image: giglepeople/aks-test-app-backend:latest
+        # Azure Container Registry에서 이미지 가져오기
+        # kltecho_jiwoo-backend라는 이름으로 빌드된 이미지 사용
+        image: ktech4.azurecr.io/kltecho_jiwoo-backend:latest
         # imagePullPolicy: Never
         ports:
         - containerPort: 5000
         env:
+        # MariaDB 연결 설정
+        # Helm으로 설치한 jiwoo 네임스페이스의 MariaDB 서비스에 연결
         - name: MYSQL_HOST
-          value: "my-mariadb"
+          value: "jw-mariadb.jiwoo.svc.cluster.local"  # Helm으로 설치한 MariaDB 서비스명
         - name: MYSQL_USER
-          value: "testuser"
+          value: "root"  # Helm MariaDB 기본 사용자
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: backend-secrets
-              key: MYSQL_PASSWORD
+              name: jw-mariadb  # Helm으로 생성된 MariaDB 시크릿
+              key: mariadb-root-password  # Helm MariaDB 루트 비밀번호
+        # Redis 연결 설정
+        # default 네임스페이스의 Redis 서비스에 연결
         - name: REDIS_HOST
-          value: "my-redis-master"
+          value: "redis-master.default.svc.cluster.local"  # default 네임스페이스의 Redis로 변경
         - name: KAFKA_SERVERS
           value: "my-kafka:9092"
         - name: REDIS_PASSWORD
@@ -51,11 +59,14 @@ spec:
               name: backend-secrets
               key: FLASK_SECRET_KEY
 ---
+---
+# 백엔드 서비스 설정
+# 클러스터 내부에서 백엔드에 접근할 수 있도록 서비스 노출
 apiVersion: v1
 kind: Service
 metadata:
   name: backend-service
-  namespace: default
+  namespace: jiwoo  # jiwoo 네임스페이스에 서비스 생성 (기존 default에서 변경)
 spec:
   type: ClusterIP
   selector:
